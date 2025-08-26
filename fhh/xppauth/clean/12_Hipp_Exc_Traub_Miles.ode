@@ -1,0 +1,26 @@
+# 4D Traub Miles equations
+# stable point at I0=0
+init v=-66.5  m=0.4  h=0.9 n=0.1  
+# m=0.037762  
+par I0=0
+par Cm=1.0  
+par ENA=50.0  EK=-100.0  EL=-67.0  GNABAR=100.0  GKBAR=80.0  GL=0.1  
+
+# rate functions
+AM(arg1) = 0.32 * (arg1 + 54.0) / (1.0 - EXP(-(arg1 + 54.0) / 4.0))
+BM(arg1) = 0.28*(arg1+27.0)/(EXP((arg1+27.0)/5) - 1.0)
+AH(arg1) = 0.128 * EXP(-(arg1 + 50.0) / 18.0)
+BH(arg1) = 4.0 / (1.0 + EXP(-(arg1 + 27.0) / 5.0))
+AN(arg1) = 0.032 * (arg1 + 52.0) / (1.0 - EXP(-(arg1 + 52.0) / 5.0))
+BN(arg1) = 0.5 * EXP(-(arg1 + 57) / 40.0)
+MINF(arg1) = AM(arg1) / (AM(arg1) + BM(arg1))
+
+# differential equations
+v'=(I0-GNABAR*M**3*H*(v-ENA)-GKBAR*N**4*(v-EK)-GL*(v-EL))/Cm
+m'= AM(v)* (1.0 - m)- BM(v)*m
+h'= AH(v)* (1.0 - h)- BH(v)*h
+n'= AN(v)* (1.0 - n)- BN(v)*n
+
+
+@ total=200,method=gear,bound=500,dt=.01,dtmin=1e-12,xhi=40,yhi=120,ylo=-10
+done

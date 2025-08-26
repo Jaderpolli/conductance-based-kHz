@@ -1,0 +1,26 @@
+# 4D Wang Buzsaki equations
+# stable point at I0=0
+init v=-65 h=0.8 n=0.1  
+#
+
+par I0=0
+par Cm=1.0
+par ENa=55.0  EK=-90.0  EL=-65.0
+par gNabar=35.0  gKbar=9.0  gL=0.1
+
+# rate functions
+AM(arg1) = 0.1 * (arg1 + 35.0) / (1.0 - EXP(-(arg1 + 35.0) / 10.0))
+BM(arg1) = 4.0 * EXP(-(arg1 + 60.0) / 18.0)
+AH(arg1) = 0.35 * EXP(-(arg1 + 58.0) / 20.0)
+BH(arg1) = 5.0 / (1.0 + EXP(-0.1 * (arg1 + 28.0)))
+AN(arg1) = 0.05 * (arg1 + 34.0) / (1.0 - EXP(-0.1 * (arg1 + 34.0)))
+BN(arg1) = 0.625 * EXP(-(arg1 + 44.0) / 80.0)
+MINF(arg1) = AM(arg1)/(AM(arg1)+BM(arg1))
+
+# differential equations
+v'=(I0-gNabar*MINF(v)**3*H*(v-ENa)-gKbar*N**4*(v-EK)-gL*(v-EL))/Cm
+h'= AH(v)* (1.0 - h)- BH(v)*h
+n'= AN(v)* (1.0 - n)- BN(v)*n
+
+@ total=100,method=gear,bound=500,dt=.01,dtmin=1e-12,xhi=40,yhi=120,ylo=-10
+done

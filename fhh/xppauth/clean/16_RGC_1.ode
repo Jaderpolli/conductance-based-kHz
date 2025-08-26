@@ -1,0 +1,52 @@
+# Fohlmeister first model
+# stable point at I0=0
+init v=-65 m=0.0 h=0.98633 c=0.0 n=0.00 CA=1E-7
+
+
+par I0=0
+par CM=1.0
+par g_Na=72.0
+par E_Na=60.6
+par g_L=0.2
+par E_L=-65.02
+par g_K=50.4
+par E_K=-101.34
+par g_KCa=0.025
+par Ca_dis=1E-6
+par Ca_r=1E-7
+par Ca_e=0.0018
+par F=96489
+par rr=0.1
+par tauCa=1.5
+par g_Ca=1.2
+par R=8.31451
+par Temp=308.15
+
+
+# rate functions
+AM(arg1)=-2.725*(arg1+35.0)/(EXP(-0.1*(arg1+35.0))-1.0)
+BM(arg1)=90.83*EXP(-(arg1+60.0)/20.0)
+AH(arg1)=1.817*EXP(-(arg1+52.0)/20.0)
+BH(arg1)=27.25/(1.0+EXP(-0.1*(arg1+22.0)))
+AN(arg1)=-0.09575*(arg1+37.0)/(EXP(-0.1*(arg1+37.0))-1.0)
+BN(arg1)=1.915*EXP(-(arg1+47.0)/80.0)
+AC(arg1)=-1.362*(arg1+13.0)/(EXP(-0.1*(arg1+13.0))-1.0)
+BC(arg1)=45.41*EXP(-(arg1+38.0)/18.0)
+E_Ca(arg1)=R*Temp/(2.0*F)*LN(Ca_e/arg1)
+
+
+#Dynamics
+v'=(I0-g_Na*m**3*h*(v-E_Na)-g_K*n**4*(v-E_K)-g_KCa*(CA/Ca_dis)**2/(1+(CA/Ca_dis)**2)*(v-E_K)-g_Ca*c**3*(v-E_Ca(CA))-g_L*(v-E_L))/CM
+m'=AM(v)*(1.0-m)-BM(v)*m
+h'=AH(v)*(1.0-h)-BH(v)*h
+n'=AN(v)*(1.0-n)-BN(v)*n
+c'=AC(v)*(1.0-c)-BC(v)*c
+#CA'=-3.0/(2.0*F*rr)*g_Ca*c**3*(v-E_Ca(CA))*heav(-(3.0/(2.0*F*rr))*g_Ca*c**3*(v-E_Ca(CA)))*(CA-Ca_r)/tauCa
+#CA'=-3.0/(2.0*F*rr)*(g_Ca*c**3*(v-E_Ca(CA)))*heav(-3.0/(2.0*F*rr)*g_Ca*c**3*(v-E_Ca(CA)))-(CA-Ca_r)/tauCa
+CA'=-3.0/(2.0*F*rr)*(g_Ca*c**3*(v-E_Ca(CA)))-(CA-Ca_r)/tauCa
+
+
+
+
+@ total=1000,method=gear,bound=500,dt=.01,dtmin=1e-12,xhi=40,yhi=120,ylo=-10
+done

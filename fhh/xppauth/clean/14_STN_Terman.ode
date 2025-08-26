@@ -1,0 +1,64 @@
+
+#######  STN NEURON  #######
+
+####### initial conditions  #######
+init v=-77
+init h=0.19
+init n=0.15
+init r=0.23
+init ca=0.06
+#init s=.0
+
+
+#######  Parameter Values  #######
+par I0=0
+par Cm=1.0  
+par gl=2.25,gna=37.5,gk=45,gahp=9.,gca=.5,gt=.5
+par vl=-60,vna=55.,vk=-80.,vca=140.
+par thetam=-30,sigmam=-15,thetah=-39,sigmah=3.1
+par thetan=-32.,sigman=-8.,thetar=-67,sigmar=2.
+par thetaa=-63.,sigmaa=-7.8,thetab=.4,sigmab=-.1
+par thetas=-39,sigmas=-8
+par tauh0=1,tauh1=500.,thh=-57.,sigmaht=3.,phi=.75
+par taun0=1,taun1=100.,thn=-80.,sigmant=26.
+par taur0=40,taur1=17.5,thr=68,sigmart=2.2,phir=.2
+par k1=15.,eps=5e-05
+par kca=22.5
+par alpha=5,beta=1.,thetag=30.,gGtoS=2.25,vGtoS=-85
+par thetH=-39,sigmH=-8
+
+
+#######  Functions  #######
+minf(v)=1./(1.+exp((v-thetam)/sigmam))
+hinf(v)=1./(1.+exp((v-thetah)/sigmah))
+ninf(v)=1./(1.+exp((v-thetan)/sigman))
+rinf(v)=1/(1+exp((v-thetar)/sigmar))
+ainf(v)=1/(1+exp((v-thetaa)/sigmaa))
+binf(r)=1/(1+exp((r-thetab)/sigmab))-1/(1+exp(-thetab/sigmab))
+sinf(v)=1./(1.+exp((v-thetas)/sigmas))
+tauh(v)=tauh0+tauh1/(1+exp((v-thh)/sigmaht))
+taun(v)=taun0+taun1/(1+exp((v-thn)/sigmant))
+taur(v)=taur0+taur1/(1+exp((v-thr)/sigmart))
+Hin(v)=1/(1+exp((v-thetH)/sigmH))
+
+####### STN Currents  #######
+il(v)=gl*(v-vl)
+ina(v,h)=gna*(minf(v))^3*h*(v-vna)
+ik(v,n)=gk*n^4*(v-vk)
+iahp(v,ca)=gahp*(v-vk)*ca/(ca+k1)
+ica(v)=gca*((sinf(v))^2)*(v-vca)
+it(v,r)=gt*(ainf(v)**3)*(binf(r)^2)*(v-vca)
+curr(v,h,n,ca,r)=il(v)+ina(v,h)+ik(v,n)+iahp(v,ca)+ica(v)+it(v,r)
+
+
+#######  STN Equations  #######
+v'=(-(curr(v,h,n,ca,r))+I0)/Cm
+h'=phi*( hinf(v)-h )/tauh(v)
+n'=phi*( ninf(v)-n )/taun(v)
+r'=phir*(rinf(v)-r)/taur(v)
+ca'=phi*eps*(-gca*((sinf(v))^2)*(v-vca)-it(v,r) - kca*ca)
+#s'=alpha*(1-s)*Hin(v-thetag)-beta*s
+
+# NUMERICS 
+@ total=2000,method=gear,bound=500,dt=.01,dtmin=1e-12,xhi=40,yhi=120,ylo=-10
+done

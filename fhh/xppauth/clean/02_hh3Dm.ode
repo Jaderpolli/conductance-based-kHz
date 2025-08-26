@@ -1,0 +1,26 @@
+# 4D Hodgkin Huxley equations
+#
+init v=-65  h=0.59  n=0.32  
+
+par I0=0
+par Cm=1.0
+par ENA=50.0  EK=-77.0  EL=-54.387  GNABAR=120.0  GKBAR=36.0  GL=0.3
+par a = -1.073  b = 0.877
+
+# rate functions
+AM(arg1) = 0.1 * (arg1 + 40.0) / (1.0 - EXP(-(arg1 + 40.0) / 10.0))
+BM(arg1) = 4.0 * EXP(-(arg1 + 65.0) / 18.0)
+AH(arg1) = 0.07 * EXP(-(arg1 + 65.0) / 20.0)
+BH(arg1) = 1.0 / (1.0 + EXP(-(arg1 + 35.0) / 10.0))
+AN(arg1) = 0.01 * (arg1 + 55.0) / (1.0 - EXP(-(arg1 + 55.0) / 10.0))
+BN(arg1) = 0.125 * EXP(-(arg1 + 65) / 80.0)
+MINF(arg1) = AM(arg1) / (AM(arg1) + BM(arg1))
+
+# differential equations
+v'=(I0-GNABAR*MINF(v)**3*H*(v-ENA)-GKBAR*N**4*(v-EK)-GL*(v-EL))/Cm
+h'= AH(v)* (1.0 - h)- BH(v)*h
+n'= AN(v)* (1.0 - n)- BN(v)*n
+
+
+@ total=100,method=gear,bound=500,dt=.01,dtmin=1e-12,xhi=40,yhi=120,ylo=-10
+done

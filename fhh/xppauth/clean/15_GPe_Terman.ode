@@ -1,0 +1,63 @@
+
+#######  GPe NEURON  #######
+
+####### initial conditions  #######
+init v=-77.
+init n=.78
+init h=.2
+init ca=0.035
+init r=0.9
+
+#######  Parameter Values  #######
+par I0=0
+par Cm=1.0  
+par gnag=120.,gkg=30.,gahpg=30.,gtg=.5,gcag=.15,glg=.1
+par vnag=55.,vkg=-80.,vcag=120.,vlg=-55.
+par thmg=-37.,sigmg=-10.
+par thhg=-58,sighg=12
+par thng=-50.,signg=-14.
+par thrg=-70.,sigrg=2.,taurg=30.
+par thag=-57.,sigag=-2.,thsg=-35.,sigsg=-2.
+par tauhg0=.05,tauhg1=.27,thhgt=-40,shg=12
+par taung0=.05,taung1=.27,thngt=-40,sng=12
+par k1g=30.,kcag=20.,epsg=0.0001
+par phirg=1,phing=.05,phihg=.05
+par ig=-1.0
+par gStoG=0.3,vStoG=0,alphag=2,betag=.04,thetagg=20
+par vGtoG=-85,gGtoG=0.1
+par thetHg=-57,sigmHg=-2
+
+
+####### GPe Functions  #######
+#synaptic infinity function is abbreviated Hing
+
+minfg(v)=1./(1.+exp((v-thmg)/sigmg))
+hinfg(v)=1/(1+exp((v-thhg)/sighg))
+ninfg(v)=1./(1.+exp((v-thng)/signg))
+rinfg(v)=1/(1+exp((v-thrg)/sigrg))
+ainfg(v)=1/(1+exp((v-thag)/sigag))
+sinfg(v)=1/(1+exp((v-thsg)/sigsg))
+tauhg(v)=tauhg0+tauhg1/(1+exp((v-thhgt)/shg))
+taung(v)=taung0+taung1/(1+exp((v-thngt)/sng))
+
+#######  GPe Currents  #######
+
+ilg(v)=glg*(v-vlg)
+inag(v,h)=gnag*(minfg(v)^3)*h*(v-vnag)
+ikg(v,n)=gkg*(n^4)*(v-vkg)
+iahpg(v,ca)=gahpg*(v-vkg)*ca/(ca+k1g)
+icag(v)=gcag*((sinfg(v))^2)*(v-vcag)
+itg(v,r)=gtg*(ainfg(v)^3)*r*(v-vcag)
+currg(v,h,n,ca,r)=itg(v,r)+inag(v,h)+ikg(v,n)+ilg(v)+iahpg(v,ca)+icag(v)
+
+#######  GPe Equations  #######
+v'=(-currg(v,h,n,ca,r)+I0)/Cm
+n'= phing*(ninfg(v)-n)/taung(v)
+h'= phihg*(hinfg(v)-h)/tauhg(v)
+r'=phirg*(rinfg(v)-r)/taurg
+ca'=epsg*(-icag(v)-itg(v,r) - kcag*ca)
+#s'=alphag*(1-s)*Hing(v-thetagg)-betag*s
+
+# NUMERICS 
+@ total=2000,method=gear,bound=500,dt=.01,dtmin=1e-12,xhi=40,yhi=120,ylo=-10
+done
