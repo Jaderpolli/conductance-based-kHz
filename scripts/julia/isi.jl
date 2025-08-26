@@ -57,8 +57,8 @@ function isi_bd()
                 isi = collect(transpose(ISI.SpikeInterval(m3h, t, thresholdm3h)))
                 bdm3h[j] =  hcat(Astim, isi)
             end
-            writedlm("results/raw/isi/isi_V_Amin_$(Amin[i])_Amax_$(Amax[i])_fStim_$(Int64(1000*fStim))_I0_$(Int64(I0)).csv", bdV)
-            writedlm("results/raw/isi/isi_m3h_Amin_$(Amin[i])_Amax_$(Amax[i])_fStim_$(Int64(1000*fStim))_I0_$(Int64(I0)).csv", bdm3h)
+            writedlm("isi_V_Amin_$(Amin[i])_Amax_$(Amax[i])_fStim_$(Int64(1000*fStim))_I0_$(Int64(I0)).csv", bdV)
+            writedlm("isi_m3h_Amin_$(Amin[i])_Amax_$(Amax[i])_fStim_$(Int64(1000*fStim))_I0_$(Int64(I0)).csv", bdm3h)
         end
     end
 end

@@ -202,7 +202,7 @@ function main()
                         end
                     end
                 end
-                writedlm("results/raw/dynamics-$(ModelName)/periods_Amin_$(Amin)_Amax_$(Amax)_fMin_$(Int64(1000*fMin))_fMax_$(Int64(1000*fMax))_I0_$(Int64(I0))_size_$(lengthA)_x_$(lengthf).csv", M)
+                writedlm("dynamics-$(ModelName)/periods_Amin_$(Amin)_Amax_$(Amax)_fMin_$(Int64(1000*fMin))_fMax_$(Int64(1000*fMax))_I0_$(Int64(I0))_size_$(lengthA)_x_$(lengthf).csv", M)
             end
             writedlm("results/raw/dynamics-$(ModelName)/lyapunov_Amin_$(Amin)_Amax_$(Amax)_fMin_$(Int64(1000*fMin))_fMax_$(Int64(1000*fMax))_I0_$(Int64(I0))_size_$(lengthA)_x_$(lengthf).csv", lyaps)
             writedlm("results/raw/dynamics-$(ModelName)/periods_Amin_$(Amin)_Amax_$(Amax)_fMin_$(Int64(1000*fMin))_fMax_$(Int64(1000*fMax))_I0_$(Int64(I0))_size_$(lengthA)_x_$(lengthf).csv", M)
